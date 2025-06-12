@@ -1,11 +1,45 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from "react";
+import { Header } from "@/components/Header";
+import { ChatInterface } from "@/components/ChatInterface";
+import { Sidebar } from "@/components/Sidebar";
+import { WelcomeScreen } from "@/components/WelcomeScreen";
 
 const Index = () => {
+  const [messages, setMessages] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const addMessage = (message) => {
+    setMessages(prev => [...prev, message]);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-rmit-light-gray/30 to-background">
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)}
+        messages={messages}
+        onClearChat={() => setMessages([])}
+      />
+      
+      {/* Main Content */}
+      <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>
+        <Header 
+          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+          hasMessages={messages.length > 0}
+        />
+        
+        <main className="relative">
+          {messages.length === 0 ? (
+            <WelcomeScreen onStartChat={addMessage} />
+          ) : (
+            <ChatInterface 
+              messages={messages}
+              onSendMessage={addMessage}
+            />
+          )}
+        </main>
       </div>
     </div>
   );
