@@ -89,9 +89,8 @@ export const Sidebar = ({ isOpen, onClose, messages, onClearChat }: SidebarProps
 
           <Separator />
 
-          {/* Course Compass Branding - Moved to Bottom */}
-          <div className="flex h-16 items-center justify-between px-4 border-t">
-            <h2 className="font-heading font-semibold">Course Compass</h2>
+          {/* Close Button */}
+          <div className="flex h-16 items-center justify-end px-4 border-t">
             <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden">
               <X className="h-4 w-4" />
             </Button>
