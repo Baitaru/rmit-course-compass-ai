@@ -26,10 +26,10 @@ export const Header = ({ onMenuClick, hasMessages }: HeaderProps) => {
           </div>
           <div className="flex flex-col">
             <h1 className="font-heading text-lg font-bold text-gradient">
-              RMIT Course Compass
+              AI Course Assistant
             </h1>
             <p className="text-xs text-muted-foreground hidden sm:block">
-              Your AI-powered study guide
+              Your intelligent study guide
             </p>
           </div>
         </div>

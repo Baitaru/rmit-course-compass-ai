@@ -34,6 +34,21 @@ const Index = () => {
       >
         {sidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </Button>
+
+      {/* Course Compass Branding - Bottom Left of Main Interface */}
+      <div className="fixed bottom-6 left-20 z-20 flex items-center gap-2 bg-card/95 backdrop-blur rounded-lg px-3 py-2 shadow-lg border">
+        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-primary to-primary/80">
+          <GraduationCap className="h-4 w-4 text-primary-foreground" />
+        </div>
+        <div className="flex flex-col">
+          <h2 className="font-heading text-sm font-semibold text-gradient">
+            RMIT Course Compass
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Your AI-powered study guide
+          </p>
+        </div>
+      </div>
       
       {/* Main Content */}
       <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>
