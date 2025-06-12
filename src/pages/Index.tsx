@@ -4,6 +4,8 @@ import { Header } from "@/components/Header";
 import { ChatInterface } from "@/components/ChatInterface";
 import { Sidebar } from "@/components/Sidebar";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
+import { Button } from "@/components/ui/button";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 
 const Index = () => {
   const [messages, setMessages] = useState([]);
@@ -22,6 +24,16 @@ const Index = () => {
         messages={messages}
         onClearChat={() => setMessages([])}
       />
+      
+      {/* Sidebar Toggle Button - Bottom Left */}
+      <Button
+        variant="outline"
+        size="icon"
+        className="fixed bottom-6 left-6 z-30 shadow-lg bg-card/95 backdrop-blur border-border hover:bg-accent"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        {sidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+      </Button>
       
       {/* Main Content */}
       <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>

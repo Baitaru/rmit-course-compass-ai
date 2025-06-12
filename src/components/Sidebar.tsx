@@ -1,5 +1,5 @@
 
-import { X, Plus, MessageSquare, Settings, FileText, Upload } from "lucide-react";
+import { X, Plus, MessageSquare, Settings, FileText, Upload, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -35,14 +35,6 @@ export const Sidebar = ({ isOpen, onClose, messages, onClearChat }: SidebarProps
         lg:relative lg:translate-x-0
       `}>
         <div className="flex h-full flex-col">
-          {/* Header */}
-          <div className="flex h-16 items-center justify-between px-4 border-b">
-            <h2 className="font-heading font-semibold">Course Compass</h2>
-            <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden">
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-
           {/* New Chat Button */}
           <div className="p-4">
             <Button 
@@ -92,6 +84,16 @@ export const Sidebar = ({ isOpen, onClose, messages, onClearChat }: SidebarProps
             <Button variant="ghost" className="w-full justify-start gap-2">
               <Settings className="h-4 w-4" />
               Settings
+            </Button>
+          </div>
+
+          <Separator />
+
+          {/* Course Compass Branding - Moved to Bottom */}
+          <div className="flex h-16 items-center justify-between px-4 border-t">
+            <h2 className="font-heading font-semibold">Course Compass</h2>
+            <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden">
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </div>
