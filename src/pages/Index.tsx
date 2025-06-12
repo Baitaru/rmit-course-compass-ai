@@ -5,7 +5,7 @@ import { ChatInterface } from "@/components/ChatInterface";
 import { Sidebar } from "@/components/Sidebar";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronLeft, GraduationCap } from "lucide-react";
 
 const Index = () => {
   const [messages, setMessages] = useState([]);
