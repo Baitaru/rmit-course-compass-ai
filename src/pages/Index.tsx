@@ -16,7 +16,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-rmit-light-gray/30 to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-rmit-light-gray/30 to-background flex">
       {/* Sidebar */}
       <Sidebar 
         isOpen={sidebarOpen} 
@@ -25,18 +25,39 @@ const Index = () => {
         onClearChat={() => setMessages([])}
       />
       
-      {/* Sidebar Toggle Button - Bottom Left */}
-      <Button
-        variant="outline"
-        size="icon"
-        className="fixed bottom-6 left-6 z-30 shadow-lg bg-card/95 backdrop-blur border-border hover:bg-accent"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-      >
-        {sidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-      </Button>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        <Header 
+          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+          hasMessages={messages.length > 0}
+        />
+        
+        <main className="flex-1 relative">
+          {messages.length === 0 ? (
+            <WelcomeScreen onStartChat={addMessage} />
+          ) : (
+            <ChatInterface 
+              messages={messages}
+              onSendMessage={addMessage}
+            />
+          )}
+        </main>
+      </div>
 
-      {/* Course Compass Branding - Bottom Left of Main Interface */}
-      <div className="fixed bottom-6 left-20 z-20 flex items-center gap-2 bg-card/95 backdrop-blur rounded-lg px-3 py-2 shadow-lg border">
+      {/* Sidebar Toggle Button - Only visible when sidebar is closed */}
+      {!sidebarOpen && (
+        <Button
+          variant="outline"
+          size="icon"
+          className="fixed bottom-6 left-6 z-30 shadow-lg bg-card/95 backdrop-blur border-border hover:bg-accent lg:hidden"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      )}
+
+      {/* Course Compass Branding - Bottom Right */}
+      <div className="fixed bottom-6 right-6 z-20 flex items-center gap-2 bg-card/95 backdrop-blur rounded-lg px-3 py-2 shadow-lg border">
         <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-primary to-primary/80">
           <GraduationCap className="h-4 w-4 text-primary-foreground" />
         </div>
@@ -48,25 +69,6 @@ const Index = () => {
             Your AI-powered study guide
           </p>
         </div>
-      </div>
-      
-      {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>
-        <Header 
-          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-          hasMessages={messages.length > 0}
-        />
-        
-        <main className="relative">
-          {messages.length === 0 ? (
-            <WelcomeScreen onStartChat={addMessage} />
-          ) : (
-            <ChatInterface 
-              messages={messages}
-              onSendMessage={addMessage}
-            />
-          )}
-        </main>
       </div>
     </div>
   );
