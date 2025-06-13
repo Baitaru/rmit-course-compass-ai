@@ -28,9 +28,9 @@ export const Sidebar = ({ isOpen, onClose, messages, onClearChat }: SidebarProps
         />
       )}
       
-      {/* Sidebar */}
+      {/* Sidebar - Now positioned absolutely when closed to not affect layout */}
       <div className={`
-        fixed lg:relative left-0 top-0 z-50 h-full w-80 transform border-r bg-card/95 backdrop-blur transition-transform duration-300 flex flex-col
+        fixed left-0 top-0 z-50 h-full w-80 transform border-r bg-card/95 backdrop-blur transition-transform duration-300 flex flex-col
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Sidebar Header with Close Button */}
@@ -98,6 +98,11 @@ export const Sidebar = ({ isOpen, onClose, messages, onClearChat }: SidebarProps
           </Button>
         </div>
       </div>
+
+      {/* Sidebar spacer - Only takes up space when sidebar is open */}
+      {isOpen && (
+        <div className="w-80 flex-shrink-0 hidden lg:block" />
+      )}
     </>
   );
 };

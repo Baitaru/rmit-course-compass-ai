@@ -25,8 +25,10 @@ const Index = () => {
         onClearChat={() => setMessages([])}
       />
       
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      {/* Main Content Area - Now responsive to sidebar state */}
+      <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
+        sidebarOpen ? 'lg:ml-0' : 'ml-0'
+      }`}>
         <Header 
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
           hasMessages={messages.length > 0}
