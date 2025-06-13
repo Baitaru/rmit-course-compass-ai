@@ -9,7 +9,7 @@ import { ChevronRight, ChevronLeft, GraduationCap } from "lucide-react";
 
 const Index = () => {
   const [messages, setMessages] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const addMessage = (message) => {
     setMessages(prev => [...prev, message]);
@@ -44,12 +44,12 @@ const Index = () => {
         </main>
       </div>
 
-      {/* Sidebar Toggle Button - Only visible when sidebar is closed */}
+      {/* Sidebar Toggle Button - Always visible when sidebar is closed */}
       {!sidebarOpen && (
         <Button
           variant="outline"
           size="icon"
-          className="fixed bottom-6 left-6 z-30 shadow-lg bg-card/95 backdrop-blur border-border hover:bg-accent lg:hidden"
+          className="fixed top-20 left-4 z-30 shadow-lg bg-card/95 backdrop-blur border-border hover:bg-accent"
           onClick={() => setSidebarOpen(true)}
         >
           <ChevronRight className="h-4 w-4" />

@@ -1,5 +1,5 @@
 
-import { X, Plus, MessageSquare, Settings, FileText, Upload } from "lucide-react";
+import { X, Plus, MessageSquare, Settings, FileText, Upload, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -31,8 +31,21 @@ export const Sidebar = ({ isOpen, onClose, messages, onClearChat }: SidebarProps
       {/* Sidebar */}
       <div className={`
         fixed lg:relative left-0 top-0 z-50 h-full w-80 transform border-r bg-card/95 backdrop-blur transition-transform duration-300 flex flex-col
-        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
+        {/* Sidebar Header with Close Button */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="font-semibold text-lg">Navigation</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="h-8 w-8"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+        </div>
+
         {/* New Chat Button */}
         <div className="p-4">
           <Button 
@@ -82,15 +95,6 @@ export const Sidebar = ({ isOpen, onClose, messages, onClearChat }: SidebarProps
           <Button variant="ghost" className="w-full justify-start gap-2">
             <Settings className="h-4 w-4" />
             Settings
-          </Button>
-        </div>
-
-        <Separator />
-
-        {/* Close Button - Only visible on mobile */}
-        <div className="flex h-16 items-center justify-end px-4 border-t lg:hidden">
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
           </Button>
         </div>
       </div>
