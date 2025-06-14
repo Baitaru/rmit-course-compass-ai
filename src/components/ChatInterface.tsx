@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Send, Upload, Paperclip, Bot, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarContent, AvatarFallback } from "@/components/ui/avatar";
 import { ModelSelector } from "@/components/ModelSelector";
-import { useLLM, type LLMModels } from "@/hooks/useLLM";
+import { useLLM, type LLMModels, availableModels } from "@/hooks/useLLM";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
