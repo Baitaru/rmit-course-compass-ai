@@ -5,7 +5,7 @@ import { ChatInterface } from "@/components/ChatInterface";
 import { Sidebar } from "@/components/Sidebar";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronLeft, GraduationCap } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 const Index = () => {
   const [messages, setMessages] = useState([]);
@@ -58,17 +58,21 @@ const Index = () => {
         </Button>
       )}
 
-      {/* Course Compass Branding - Bottom Right */}
+      {/* RMIT Course Compass Branding - Bottom Right */}
       <div className="fixed bottom-6 right-6 z-20 flex items-center gap-2 bg-card/95 backdrop-blur rounded-lg px-3 py-2 shadow-lg border">
-        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-primary to-primary/80">
-          <GraduationCap className="h-4 w-4 text-primary-foreground" />
+        <div className="flex h-6 w-8 items-center justify-center">
+          <img 
+            src="/lovable-uploads/5ac39bee-b30c-43a0-8fd5-8a90089a0d24.png" 
+            alt="RMIT University" 
+            className="h-4 w-auto object-contain"
+          />
         </div>
         <div className="flex flex-col">
           <h2 className="font-heading text-sm font-semibold text-gradient">
             RMIT Course Compass
           </h2>
           <p className="text-xs text-muted-foreground">
-            Your AI-powered study guide
+            Your AI-powered RMIT study guide
           </p>
         </div>
       </div>

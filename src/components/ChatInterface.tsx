@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarContent, AvatarFallback } from "@/components/ui/avatar";
 import { ModelSelector } from "@/components/ModelSelector";
 import { useLLM, type LLMModels, availableModels } from "@/hooks/useLLM";
+import { useKnowledgeBase } from "@/hooks/useKnowledgeBase";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
@@ -28,6 +29,7 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { sendMessage, isLoading } = useLLM();
+  const { searchKnowledge } = useKnowledgeBase();
   const { toast } = useToast();
 
   const scrollToBottom = () => {
@@ -52,7 +54,10 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
     setInputText("");
 
     try {
-      const response = await sendMessage(inputText, selectedModel);
+      // Search knowledge base for relevant RMIT information
+      const context = searchKnowledge(inputText);
+      
+      const response = await sendMessage(inputText, selectedModel, context);
       
       const aiResponse: Message = {
         id: Date.now() + 1,
@@ -96,7 +101,14 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
       {/* Model Selector Header */}
       <div className="border-b bg-background/95 backdrop-blur p-4">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <h2 className="text-sm font-medium text-muted-foreground">RMIT Course Compass</h2>
+          <div className="flex items-center gap-2">
+            <img 
+              src="/lovable-uploads/5ac39bee-b30c-43a0-8fd5-8a90089a0d24.png" 
+              alt="RMIT University" 
+              className="h-6 w-auto object-contain"
+            />
+            <h2 className="text-sm font-medium text-muted-foreground">RMIT Course Compass</h2>
+          </div>
           <ModelSelector 
             selectedModel={selectedModel}
             onModelChange={setSelectedModel}
@@ -210,7 +222,7 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
           </div>
           
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            RMIT Course Compass powered by {availableModels[selectedModel]}. Please verify important information.
+            RMIT Course Compass powered by {availableModels[selectedModel]}. Information based on RMIT University official sources.
           </p>
         </div>
       </div>

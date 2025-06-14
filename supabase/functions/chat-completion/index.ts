@@ -83,13 +83,18 @@ async function callAnthropicModel(message: string, model: string, context: strin
     'claude-3.7-sonnet': 'claude-3-5-sonnet-20241022'
   }
 
-  const systemPrompt = `You are an RMIT Course Compass AI assistant. You help students with RMIT course information, requirements, and career pathways.
+  const systemPrompt = `You are the RMIT Course Compass AI assistant. You help students with RMIT University course information, requirements, and career pathways.
 
-IMPORTANT: Only provide information about RMIT courses and programs. If asked about other universities or non-RMIT topics, politely redirect to RMIT-related information.
+IMPORTANT GUIDELINES:
+- Only provide information about RMIT University courses, programs, and services
+- If asked about other universities or non-RMIT topics, politely redirect to RMIT-related information
+- Base your responses on the provided RMIT context information
+- Be helpful, accurate, and encouraging about RMIT's offerings
+- Focus on how RMIT programs can help students achieve their career goals
 
-${context ? `Here is relevant RMIT information to help answer the question:\n${context}` : ''}
+${context ? `Here is relevant RMIT University information to help answer the question:\n${context}` : ''}
 
-Be helpful, accurate, and encouraging. Focus on RMIT's offerings and how they can help students achieve their goals.`
+Remember: You are specifically designed to assist with RMIT University inquiries only.`
 
   console.log('Calling Anthropic API with model:', modelMap[model] || 'claude-3-haiku-20240307')
 
@@ -127,7 +132,7 @@ Be helpful, accurate, and encouraging. Focus on RMIT's offerings and how they ca
 async function callAWSBedrockModel(message: string, model: string, context: string, accessKey: string, secretKey: string, region: string) {
   // AWS Bedrock implementation would go here
   // This is a simplified version - you'd need to implement AWS signing
-  const systemPrompt = `You are an RMIT Course Compass AI assistant. Only provide information about RMIT courses and programs.
+  const systemPrompt = `You are the RMIT Course Compass AI assistant. Only provide information about RMIT University courses and programs.
   
 ${context ? `Relevant RMIT information:\n${context}` : ''}`
 

@@ -1,5 +1,5 @@
 
-import { Menu, GraduationCap, MessageSquare } from "lucide-react";
+import { Menu, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
@@ -21,15 +21,19 @@ export const Header = ({ onMenuClick, hasMessages }: HeaderProps) => {
         </Button>
         
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80">
-            <GraduationCap className="h-5 w-5 text-primary-foreground" />
+          <div className="flex h-10 w-16 items-center justify-center">
+            <img 
+              src="/lovable-uploads/5ac39bee-b30c-43a0-8fd5-8a90089a0d24.png" 
+              alt="RMIT University" 
+              className="h-8 w-auto object-contain"
+            />
           </div>
           <div className="flex flex-col">
             <h1 className="font-heading text-lg font-bold text-gradient">
-              AI Course Assistant
+              RMIT Course Compass
             </h1>
             <p className="text-xs text-muted-foreground hidden sm:block">
-              Your intelligent study guide
+              Your intelligent RMIT study guide
             </p>
           </div>
         </div>
