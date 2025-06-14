@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Send, Upload, Paperclip, Bot, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarContent, AvatarFallback } from "@/components/ui/avatar";
+import { ModelSelector } from "@/components/ModelSelector";
+import { useLLM, type LLMModels } from "@/hooks/useLLM";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: number;
@@ -21,9 +23,11 @@ interface ChatInterfaceProps {
 
 export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) => {
   const [inputText, setInputText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<keyof LLMModels>('claude-3-haiku');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { sendMessage, isLoading } = useLLM();
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -33,8 +37,8 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = () => {
-    if (!inputText.trim()) return;
+  const handleSend = async () => {
+    if (!inputText.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now(),
@@ -45,19 +49,34 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
 
     onSendMessage(userMessage);
     setInputText("");
-    setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const response = await sendMessage(inputText, selectedModel);
+      
       const aiResponse: Message = {
         id: Date.now() + 1,
-        text: "Thank you for your question! I'm here to help you navigate RMIT's course offerings. Based on your interests, I can recommend several programs that align with your career goals. Would you like me to start with undergraduate or postgraduate options?",
+        text: response,
         sender: 'assistant',
         timestamp: new Date()
       };
+      
       onSendMessage(aiResponse);
-      setIsTyping(false);
-    }, 1500);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to get response from AI model. Please try again.",
+        variant: "destructive"
+      });
+      
+      const errorResponse: Message = {
+        id: Date.now() + 1,
+        text: "I apologize, but I'm having trouble connecting to the AI service right now. Please try again in a moment.",
+        sender: 'assistant',
+        timestamp: new Date()
+      };
+      
+      onSendMessage(errorResponse);
+    }
   };
 
   const handleFileUpload = () => {
@@ -73,6 +92,17 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
+      {/* Model Selector Header */}
+      <div className="border-b bg-background/95 backdrop-blur p-4">
+        <div className="max-w-4xl mx-auto flex justify-between items-center">
+          <h2 className="text-sm font-medium text-muted-foreground">RMIT Course Compass</h2>
+          <ModelSelector 
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
+          />
+        </div>
+      </div>
+
       {/* Messages Area */}
       <ScrollArea className="flex-1 p-4">
         <div className="max-w-4xl mx-auto space-y-6">
@@ -95,7 +125,7 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
                   ? 'bg-primary text-primary-foreground' 
                   : 'bg-card'
               }`}>
-                <p className="text-sm leading-relaxed">{message.text}</p>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
                 <p className={`text-xs mt-2 ${
                   message.sender === 'user' 
                     ? 'text-primary-foreground/70' 
@@ -116,7 +146,7 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
             </div>
           ))}
           
-          {isTyping && (
+          {isLoading && (
             <div className="flex gap-3 justify-start">
               <Avatar className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80">
                 <AvatarContent>
@@ -165,12 +195,13 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me about RMIT courses, requirements, or career pathways..."
                 className="pr-12 min-h-[2.5rem] resize-none"
+                disabled={isLoading}
               />
             </div>
 
             <Button 
               onClick={handleSend}
-              disabled={!inputText.trim() || isTyping}
+              disabled={!inputText.trim() || isLoading}
               className="gradient-primary text-primary-foreground shrink-0"
             >
               <Send className="h-4 w-4" />
@@ -178,7 +209,7 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
           </div>
           
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            RMIT Course Compass can make mistakes. Please verify important information.
+            RMIT Course Compass powered by {availableModels[selectedModel]}. Please verify important information.
           </p>
         </div>
       </div>
