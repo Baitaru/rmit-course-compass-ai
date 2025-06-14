@@ -2,10 +2,20 @@
 import { useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!
-)
+// Check if environment variables are available
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables:', {
+    VITE_SUPABASE_URL: supabaseUrl ? 'Set' : 'Missing',
+    VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? 'Set' : 'Missing'
+  })
+}
+
+const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
 
 export interface LLMModels {
   'claude-3-haiku': string
@@ -34,6 +44,14 @@ export const useLLM = () => {
   ): Promise<string> => {
     setIsLoading(true)
     setError(null)
+
+    // Check if Supabase is properly configured
+    if (!supabase) {
+      const errorMessage = 'Supabase is not properly configured. Please check your environment variables.'
+      setError(errorMessage)
+      setIsLoading(false)
+      throw new Error(errorMessage)
+    }
 
     try {
       const { data, error: supabaseError } = await supabase.functions.invoke('chat-completion', {
