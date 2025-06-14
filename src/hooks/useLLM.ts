@@ -1,21 +1,6 @@
 
 import { useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
-
-// Check if environment variables are available
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables:', {
-    VITE_SUPABASE_URL: supabaseUrl ? 'Set' : 'Missing',
-    VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? 'Set' : 'Missing'
-  })
-}
-
-const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null
+import { supabase } from '@/integrations/supabase/client'
 
 export interface LLMModels {
   'claude-3-haiku': string
@@ -45,15 +30,9 @@ export const useLLM = () => {
     setIsLoading(true)
     setError(null)
 
-    // Check if Supabase is properly configured
-    if (!supabase) {
-      const errorMessage = 'Supabase is not properly configured. Please check your environment variables.'
-      setError(errorMessage)
-      setIsLoading(false)
-      throw new Error(errorMessage)
-    }
-
     try {
+      console.log('Sending message to chat-completion function:', { message, selectedModel, context })
+      
       const { data, error: supabaseError } = await supabase.functions.invoke('chat-completion', {
         body: {
           message,
@@ -62,16 +41,21 @@ export const useLLM = () => {
         }
       })
 
+      console.log('Response from chat-completion function:', { data, error: supabaseError })
+
       if (supabaseError) {
+        console.error('Supabase function error:', supabaseError)
         throw new Error(supabaseError.message)
       }
 
       if (data.error) {
+        console.error('Function returned error:', data.error)
         throw new Error(data.error)
       }
 
       return data.response
     } catch (err) {
+      console.error('Error in sendMessage:', err)
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setError(errorMessage)
       throw new Error(errorMessage)
