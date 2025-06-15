@@ -24,7 +24,7 @@ interface ChatInterfaceProps {
 
 export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) => {
   const [inputText, setInputText] = useState("");
-  const [selectedModel, setSelectedModel] = useState<keyof LLMModels>('claude-3-haiku');
+  const [selectedModel, setSelectedModel] = useState<keyof LLMModels>('amazon-nova-pro');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { sendMessage, isLoading } = useLLM();

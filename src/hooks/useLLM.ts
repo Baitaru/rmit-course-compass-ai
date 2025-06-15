@@ -1,21 +1,12 @@
-
 import { useState } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 
 export interface LLMModels {
-  'claude-3-haiku': string
-  'claude-3.5-sonnet': string
-  'claude-3.7-sonnet': string
-  'amazon-nova-pro': string
-  'meta-llama-4': string
+  'amazon-nova-pro': string;
 }
 
 export const availableModels: LLMModels = {
-  'claude-3-haiku': 'Anthropic Claude 3 Haiku',
-  'claude-3.5-sonnet': 'Anthropic Claude 3.5 Sonnet', 
-  'claude-3.7-sonnet': 'Anthropic Claude 3.7 Sonnet',
   'amazon-nova-pro': 'Amazon Nova Pro',
-  'meta-llama-4': 'Meta Llama 4 Maverick 17B'
 }
 
 export const useLLM = () => {
@@ -24,7 +15,7 @@ export const useLLM = () => {
 
   const sendMessage = async (
     message: string, 
-    selectedModel: keyof LLMModels = 'claude-3-haiku',
+    selectedModel: keyof LLMModels = 'amazon-nova-pro',
     context?: string
   ): Promise<string> => {
     setIsLoading(true)
