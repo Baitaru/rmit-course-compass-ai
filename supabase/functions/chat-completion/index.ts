@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { AwsV4Signer } from "https://deno.land/x/aws_sigv4@v0.3.0/mod.ts";
 
@@ -48,18 +49,25 @@ serve(async (req) => {
 
 async function callAWSBedrockModel(message: string, context: string) {
   console.log(`callAWSBedrockModel called.`);
+
+  const getSecret = (name: string, fallback: string): string => {
+    const value = Deno.env.get(name);
+    if (!value) {
+      console.warn(`WARNING: ${name} secret not found. Using fallback value. Please set this secret in your Supabase project settings.`);
+      return fallback;
+    }
+    return value;
+  };
   
   // --- User Provided Configuration ---
-  const AWS_REGION = 'us-east-1';
-  // Use secret for model ID, with fallback to the previously hardcoded value
-  const AWS_MODEL_ID = Deno.env.get('AWS_MODEL_ID') || 'anthropic.claude-3-5-sonnet-20240620-v1:0';
-  if (!Deno.env.get('AWS_MODEL_ID')) {
-    console.warn('WARNING: AWS_MODEL_ID secret not found. Using hardcoded fallback model. Please set the secret in your Supabase project settings.');
-  }
+  const AWS_REGION = getSecret('AWS_REGION', 'us-east-1');
+  const AWS_MODEL_ID = getSecret('AWS_MODEL_ID', 'anthropic.claude-3-5-sonnet-20240620-v1:0');
+  const AWS_IDENTITY_POOL_ID = getSecret('AWS_IDENTITY_POOL_ID', 'us-east-1:7771aae7-be2c-4496-a582-615af64292cf');
+  const AWS_USER_POOL_ID = getSecret('AWS_USER_POOL_ID', 'us-east-1_koPKi1lPU');
+  const AWS_APP_CLIENT_ID = getSecret('AWS_APP_CLIENT_ID', '3h7m15971bnfah362dldub1u2p');
+  
   console.log(`Using AWS Bedrock Model ID: ${AWS_MODEL_ID}`);
-  const AWS_IDENTITY_POOL_ID = 'us-east-1:7771aae7-be2c-4496-a582-615af64292cf';
-  const AWS_USER_POOL_ID = 'us-east-1_koPKi1lPU';
-  const AWS_APP_CLIENT_ID = '3h7m15971bnfah362dldub1u2p';
+  
   const BEDROCK_TEMPERATURE = 0.3;
   const BEDROCK_TOP_P = 0.9;
   const BEDROCK_MAX_TOKENS = 4096;
