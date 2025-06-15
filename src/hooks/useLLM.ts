@@ -48,9 +48,14 @@ export const useLLM = () => {
         throw new Error(supabaseError.message)
       }
 
-      if (data.error) {
+      if (data?.error) {
         console.error('Function returned error:', data.error)
         throw new Error(data.error)
+      }
+
+      if (typeof data?.response !== 'string') {
+        console.error('Invalid response format from function:', data);
+        throw new Error('Received an invalid response from the AI service.');
       }
 
       return data.response

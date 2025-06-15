@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Send, Upload, Paperclip, Bot, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -54,20 +53,24 @@ export const ChatInterface = ({ messages, onSendMessage }: ChatInterfaceProps) =
     setInputText("");
 
     try {
-      // Search knowledge base for relevant RMIT information
+      console.log('Searching knowledge base...');
       const context = searchKnowledge(inputText);
+      console.log('Context found:', context ? `${context.substring(0, 100)}...` : 'None');
       
+      console.log('Sending message to LLM...');
       const response = await sendMessage(inputText, selectedModel, context);
+      console.log('Response from LLM:', response);
       
       const aiResponse: Message = {
         id: Date.now() + 1,
-        text: response,
+        text: response || "I'm sorry, I couldn't find any relevant information for your query. Could you please try rephrasing it? I can help with questions about RMIT's courses, campus life, and student services.",
         sender: 'assistant',
         timestamp: new Date()
       };
       
       onSendMessage(aiResponse);
     } catch (error) {
+      console.error("Error in handleSend:", error);
       toast({
         title: "Error",
         description: "Failed to get response from AI model. Please try again.",
