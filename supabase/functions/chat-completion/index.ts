@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { callAWSBedrockModel } from "./bedrock.ts"
 
@@ -22,13 +21,6 @@ serve(async (req) => {
     console.log('Chat completion function called (AWS Bedrock only)')
     const { message, model, context }: ChatRequest = await req.json()
     console.log('Request:', { message, model, context })
-
-    const cognitoUsername = Deno.env.get('COGNITO_USERNAME')
-    const cognitoPassword = Deno.env.get('COGNITO_PASSWORD')
-
-    if (!cognitoUsername || !cognitoPassword) {
-        throw new Error('AWS Cognito credentials not configured. Please ensure COGNITO_USERNAME and COGNITO_PASSWORD are set in Supabase secrets.')
-    }
 
     const response = await callAWSBedrockModel(message, context || '')
 

@@ -1,24 +1,24 @@
-
 import { AwsV4Signer } from "https://deno.land/x/aws_sigv4@v0.3.0/mod.ts";
+
+const getRequiredSecret = (name: string): string => {
+  const value = Deno.env.get(name);
+  if (!value) {
+    throw new Error(`Required secret "${name}" not found. Please set this secret in your Supabase project settings.`);
+  }
+  return value;
+};
 
 export async function callAWSBedrockModel(message: string, context: string) {
   console.log(`callAWSBedrockModel called.`);
-
-  const getSecret = (name: string, fallback: string): string => {
-    const value = Deno.env.get(name);
-    if (!value) {
-      console.warn(`WARNING: ${name} secret not found. Using fallback value. Please set this secret in your Supabase project settings.`);
-      return fallback;
-    }
-    return value;
-  };
   
-  // --- User Provided Configuration ---
-  const AWS_REGION = getSecret('AWS_REGION', 'us-east-1');
-  const AWS_MODEL_ID = getSecret('AWS_MODEL_ID', 'anthropic.claude-3-5-sonnet-20240620-v1:0');
-  const AWS_IDENTITY_POOL_ID = getSecret('AWS_IDENTITY_POOL_ID', 'us-east-1:7771aae7-be2c-4496-a582-615af64292cf');
-  const AWS_USER_POOL_ID = getSecret('AWS_USER_POOL_ID', 'us-east-1_koPKi1lPU');
-  const AWS_APP_CLIENT_ID = getSecret('AWS_APP_CLIENT_ID', '3h7m15971bnfah362dldub1u2p');
+  // --- User Provided Configuration from Secrets ---
+  const AWS_REGION = getRequiredSecret('AWS_REGION');
+  const AWS_MODEL_ID = getRequiredSecret('AWS_MODEL_ID');
+  const AWS_IDENTITY_POOL_ID = getRequiredSecret('AWS_IDENTITY_POOL_ID');
+  const AWS_USER_POOL_ID = getRequiredSecret('AWS_USER_POOL_ID');
+  const AWS_APP_CLIENT_ID = getRequiredSecret('AWS_APP_CLIENT_ID');
+  const cognitoUsername = getRequiredSecret('COGNITO_USERNAME');
+  const cognitoPassword = getRequiredSecret('COGNITO_PASSWORD');
   
   console.log(`Using AWS Bedrock Model ID: ${AWS_MODEL_ID}`);
   
@@ -26,13 +26,6 @@ export async function callAWSBedrockModel(message: string, context: string) {
   const BEDROCK_TOP_P = 0.9;
   const BEDROCK_MAX_TOKENS = 4096;
   // --- End Configuration ---
-
-  const cognitoUsername = Deno.env.get('COGNITO_USERNAME');
-  const cognitoPassword = Deno.env.get('COGNITO_PASSWORD');
-
-  if (!cognitoUsername || !cognitoPassword) {
-    throw new Error('Cognito username or password not found in environment variables.');
-  }
 
   // Step 1: Authenticate with Cognito User Pool
   console.log('Step 1: Authenticating with Cognito User Pool...');
