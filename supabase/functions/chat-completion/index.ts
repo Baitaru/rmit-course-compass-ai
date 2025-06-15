@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
@@ -80,7 +79,7 @@ async function callAnthropicModel(message: string, model: string, context: strin
   const modelMap: { [key: string]: string } = {
     'claude-3-haiku': 'claude-3-haiku-20240307',
     'claude-3.5-sonnet': 'claude-3-5-sonnet-20240620',
-    'claude-3.7-sonnet': 'claude-3-5-sonnet-20241022'
+    'claude-3.7-sonnet': 'claude-3-7-sonnet-20250219' // Corrected model ID
   }
 
   const systemPrompt = `You are the RMIT Course Compass AI assistant. You help students with RMIT University course information, requirements, and career pathways.
@@ -96,37 +95,55 @@ ${context ? `Here is relevant RMIT University information to help answer the que
 
 Remember: You are specifically designed to assist with RMIT University inquiries only.`
 
-  console.log('Calling Anthropic API with model:', modelMap[model] || 'claude-3-haiku-20240307')
+  const selectedModelId = modelMap[model] || 'claude-3-haiku-20240307';
+  console.log('Calling Anthropic API with model:', selectedModelId)
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: modelMap[model] || 'claude-3-haiku-20240307',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: [
-        {
-          role: 'user',
-          content: message
-        }
-      ]
+  const requestBody = {
+    model: selectedModelId,
+    max_tokens: 1000,
+    system: systemPrompt,
+    messages: [
+      {
+        role: 'user',
+        content: message
+      }
+    ]
+  };
+  
+  console.log('Anthropic API Request Body:', JSON.stringify(requestBody, null, 2));
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify(requestBody)
     })
-  })
 
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error('Anthropic API error:', errorText)
-    throw new Error(`Anthropic API error: ${response.status} ${errorText}`)
+    const responseText = await response.text();
+    console.log(`Anthropic API response status: ${response.status}`);
+    console.log(`Anthropic API response body: ${responseText}`);
+
+    if (!response.ok) {
+      throw new Error(`Anthropic API error: ${response.status} ${responseText}`)
+    }
+
+    const data = JSON.parse(responseText);
+
+    if (data.content && data.content[0] && typeof data.content[0].text === 'string') {
+      console.log('Successfully extracted text from Anthropic response.');
+      return data.content[0].text
+    } else {
+      console.error('Invalid response structure from Anthropic:', data);
+      throw new Error('Received invalid response structure from Anthropic.');
+    }
+  } catch (e) {
+    console.error('Error during fetch to Anthropic:', e);
+    throw e; // re-throw to be caught by the main handler
   }
-
-  const data = await response.json()
-  console.log('Anthropic response:', data)
-  return data.content[0].text
 }
 
 async function callAWSBedrockModel(message: string, model: string, context: string, accessKey: string, secretKey: string, region: string) {
