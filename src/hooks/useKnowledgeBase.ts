@@ -78,14 +78,28 @@ export const useKnowledgeBase = () => {
   }, []);
 
   const searchKnowledge = (query: string): string => {
-    const relevantItems = knowledgeBase.filter(item => 
-      item.title.toLowerCase().includes(query.toLowerCase()) ||
-      item.content.toLowerCase().includes(query.toLowerCase()) ||
-      item.category.toLowerCase().includes(query.toLowerCase())
-    );
+    const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+
+    if (queryWords.length === 0) {
+      return "";
+    }
+
+    const scoredItems = knowledgeBase.map(item => {
+      let score = 0;
+      queryWords.forEach(word => {
+        if (item.title.toLowerCase().includes(word)) score += 5;
+        if (item.content.toLowerCase().includes(word)) score += 1;
+        if (item.category.toLowerCase().includes(word)) score += 3;
+      });
+      return { ...item, score };
+    }).filter(item => item.score > 0);
+
+    scoredItems.sort((a, b) => b.score - a.score);
+
+    const relevantItems = scoredItems.slice(0, 3);
 
     if (relevantItems.length === 0) {
-      return "I can only provide information about RMIT University courses, programs, and services. Please ask questions related to RMIT's study options, campus information, or student services.";
+      return "";
     }
 
     return relevantItems.map(item => `${item.title}: ${item.content}`).join('\n\n');
